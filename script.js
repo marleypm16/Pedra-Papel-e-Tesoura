@@ -18,17 +18,17 @@ class Game {
     this.isBall = null;
     this.isX = null;
     this.player = null;
-  
-    cell.forEach((cell)=>{
-      cell.classList.remove('circle')
-      cell.classList.remove('x')
-    })
-  
+
+    cell.forEach((cell) => {
+      cell.classList.remove("circle");
+      cell.classList.remove("x");
+    });
+
     board.style.display = "none";
-    btnBall.style.display = "block";
-    btnX.style.display = "block";
+    btnBall.style.display = "inline";
+    btnX.style.display = "inline";
+    winningMessage.innerHTML = ""; // Add this line
   }
-  
 
   chooseBallOrX(choice) {
     this.player = choice;
@@ -41,6 +41,8 @@ class Game {
   }
 
   insertBallOrX(cell) {
+    console.log(this.isBall);
+    console.log(this.isX);
     if (this.isBall) {
       cell.classList.add("circle");
     } else if (this.isX) {
@@ -61,10 +63,12 @@ class Game {
       [2, 5, 8],
       [2, 4, 6],
     ];
-  
+
+    let draw = true;
+
     for (const possibilities of winPossibilities) {
       const [a, b, c] = possibilities;
-  
+
       if (
         cell[a].classList.contains("circle") &&
         cell[b].classList.contains("circle") &&
@@ -81,13 +85,30 @@ class Game {
         winningMessageDisplay.style.display = "block";
         winningMessage.innerHTML = "X ganhou";
         return; // exit the loop if there's a winner
+      } else if (
+        (!cell[a].classList.contains("circle") &&
+          !cell[a].classList.contains("x")) ||
+        (!cell[b].classList.contains("circle") &&
+          !cell[b].classList.contains("x")) ||
+        (!cell[c].classList.contains("circle") &&
+          !cell[c].classList.contains("x"))
+      ) {
+        // If any cell is empty, the game is not a draw
+        draw = false;
       }
     }
+
+    if (draw) {
+      winningMessageDisplay.style.display = "block";
+      winningMessage.innerHTML = "Empate";
+    }
   }
-  
 
   startGame() {
     // Reset the player state based on the user's choice
+    console.log(this.player);
+    console.log(this.isBall);
+    console.log(this.isX);
     if (this.player == "ball") {
       this.isBall = true;
       this.isX = false;
@@ -95,23 +116,29 @@ class Game {
       this.isBall = false;
       this.isX = true;
     }
-  
+
     cell.forEach((cell) => {
-      cell.addEventListener("click", () => {
-        this.insertBallOrX(cell);
-      });
+      cell.removeEventListener("click", this.handleCellClick);
+    });
+
+    // Add new click event listeners
+    cell.forEach((cell) => {
+      cell.addEventListener("click", this.handleCellClick);
     });
   }
+  handleCellClick = (event) => {
+    this.insertBallOrX(event.target);
+  };
 }
 
 const game = new Game();
 
 btnBall.addEventListener("click", () => {
-    board.style.display = "grid";
-    btnBall.style.display = "none";
-    btnX.style.display = "none";
-    game.chooseBallOrX("ball");
-    game.startGame();
+  board.style.display = "grid";
+  btnBall.style.display = "none";
+  btnX.style.display = "none";
+  game.chooseBallOrX("ball");
+  game.startGame();
 });
 
 btnX.addEventListener("click", () => {
@@ -124,5 +151,5 @@ btnX.addEventListener("click", () => {
 });
 
 btnRestart.addEventListener("click", () => {
-  game.restart()
+  game.restart();
 });
