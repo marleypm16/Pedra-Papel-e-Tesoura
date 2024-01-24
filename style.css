@@ -146,3 +146,22 @@ body {
   display: flex;
 }
 
+.playerchoose{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+}
+
+.btn{
+  padding: 2.5em;
+  border-radius: 45px;
+  background-color: aliceblue;
+  color: black;
+  font-size: 25px;
+}
+
